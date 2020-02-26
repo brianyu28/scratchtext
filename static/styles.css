@@ -1,0 +1,41 @@
+body {
+    background-color: #e6f2fc;
+    font-family: sans-serif;
+    height: 100%;
+}
+
+.title {
+    height: 70px;
+}
+
+#editor {
+    border-radius: 8px;
+    width: 70%;
+    height: 500px;
+    font-size: 16px;
+}
+.sidebar {
+    float: left;
+    width: 250px;
+    min-height: 700px;
+}
+
+.submit {
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 8px;
+}
+
+.block {
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-family: serif;
+    margin: 5px;
+    padding: 8px;
+    color: white;
+}
+
+.block-motion {
+    background-color: #5c97f7;
+}

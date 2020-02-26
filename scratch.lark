@@ -1,0 +1,11 @@
+start: instruction+
+
+instruction: FUNCTION "(" NUMBER ")"
+
+FUNCTION: WORD
+NUMBER: SIGNED_NUMBER
+WHITESPACE: (" " | "\n")+
+
+%import common.WORD
+%import common.SIGNED_NUMBER
+%ignore WHITESPACE

@@ -4,6 +4,8 @@ import tempfile
 import shutil
 import zipfile
 
+from lark import Lark
+
 class ScratchProject():
 
     CUR_ID = 0
@@ -103,3 +105,36 @@ class ScratchProject():
         shutil.rmtree(tmpdir)
 
 
+with open("scratch.lark") as f:
+    ScratchParser = Lark(f.read())
+
+def parse(text):
+    return parse_tree(ScratchParser.parse(text))
+
+def parse_tree(t):
+    if t.data == "start":
+        return list(map(parse_tree, t.children))
+
+    if t.data == "instruction":
+        func = str(t.children[0])
+        arg = str(t.children[1])
+        if func == "move":
+            return {
+                "opcode": "motion_movesteps",
+                "text_value": arg
+            }
+
+    return None
+
+def wrap(sprite_name, script):
+    """
+    temporary function to wrap script into program structure
+    TODO: should replace later
+    """
+    program = {
+        sprite_name: [
+            {"opcode": "event_whenflagclicked"}
+        ]
+    }
+    program["Sprite1"] += script
+    return program
