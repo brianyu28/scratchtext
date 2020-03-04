@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var url = window.URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = url;
-            a.download = document.querySelector('#file-select').files[0].name.replace('.sb3', '(Updated) .sb3');
+            a.download = document.querySelector('#file-select').files[0].name.replace('.sb3', ' (Updated).sb3');
             document.body.appendChild(a);
             a.click();    
             a.remove();
@@ -104,5 +104,18 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('#sprite-select').addEventListener('change', function() {
         const name = $('#sprite-select').val();
         changeSpriteSelection(name);
+    });
+
+    // Allow tab in textarea
+    // https://sumtips.com/snippets/javascript/tab-in-textarea/
+    $('textarea').keydown(function(e) {
+        if (e.keyCode === 9) { // tab was pressed
+            let start = this.selectionStart;
+            let end = this.selectionEnd;
+            var $this = $(this);
+            $this.val($this.val().substring(0, start) + '    ' + $this.val().substring(end));
+            this.selectionStart = this.selectionEnd = start + 4;
+            return false;
+        }
     });
 });
