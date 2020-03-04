@@ -15,6 +15,44 @@ function updateCurrentScript() {
     scripts[curSprite] = $('#editor').val();
 }
 
+function addSprite() {
+    let name = prompt('Name for new sprite:');
+    if (Object.keys(scripts).includes(name)) {
+        alert('Sprite with that name already exists.');
+    } else {
+        scripts[name] = ''; 
+        updateSpriteSelect();
+        changeSpriteSelection(name);
+    }
+}
+
+function deleteSprite() {
+    if (Object.keys(scripts).length === 1) {
+        alert('Cannot delete only remaining sprite.');
+    } else {
+        let sprites = Object.keys(scripts);
+        let index = sprites.indexOf(curSprite) - 1;
+        if (index < 0)
+            index = 0;
+        delete scripts[curSprite];
+        updateSpriteSelect();
+
+        // Manually change sprite selection
+        sprites = Object.keys(scripts);
+        curSprite = sprites[index];
+        console.log(curSprite);
+        $('#sprite-select').val(curSprite);
+        $('#editor').val(scripts[curSprite]);
+    }
+}
+
+function changeSpriteSelection(name) {
+    updateCurrentScript();
+    curSprite = name;
+    $('#sprite-select').val(name);
+    $('#editor').val(scripts[name]);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 
     updateSpriteSelect();
@@ -52,11 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var url = window.URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = url;
-            a.download = 'project.sb3';
+            a.download = document.querySelector('#file-select').files[0].name.replace('.sb3', '(Updated) .sb3');
             document.body.appendChild(a);
             a.click();    
             a.remove();
         });
         return false;
+    });
+
+    $('#add').on('click', addSprite);
+    $('#delete').on('click', deleteSprite);
+
+    document.querySelector('#sprite-select').addEventListener('change', function() {
+        const name = $('#sprite-select').val();
+        changeSpriteSelection(name);
     });
 });
