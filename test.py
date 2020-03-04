@@ -10,17 +10,16 @@ program = {
     ]
 }
 
+src = """
+when_flag_clicked() {
+    move(10)
+    move(10)
+}
 """
+
+program = {"S1": scratch.parse(src)}
+print(program)
+
 project = scratch.ScratchProject("old.sb3")
 project.add_program(program)
-
 project.write("new.sb3")
-"""
-
-x = """
-move(10)
-move(10)
-"""
-
-result = scratch.wrap("Sprite1", scratch.parse(x))
-print(result)

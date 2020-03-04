@@ -1,4 +1,10 @@
-from flask import Flask, render_template
+import os
+import json
+import scratch
+import shutil
+import tempfile
+
+from flask import Flask, request, render_template, send_file
 
 app = Flask(__name__)
 
@@ -8,5 +14,18 @@ def index():
 
 @app.route("/submit", methods=["POST"])
 def submit():
-    return "TODO"
-    pass
+    program = json.loads(request.form["scripts"])
+    f = request.files["file"]
+
+    # Save old file
+    tmpdir = tempfile.mkdtemp()
+    print(tmpdir)
+    f.save(os.path.join(tmpdir, "old.sb3"))
+
+    # Parse new program
+    program = {sprite : scratch.parse(program[sprite])
+               for sprite in program}
+    project = scratch.ScratchProject(os.path.join(tmpdir, "old.sb3"))
+    project.add_program(program)
+    project.write(os.path.join(tmpdir, "new.sb3"))
+    return send_file(os.path.join(tmpdir, "new.sb3"))

@@ -59,33 +59,37 @@ class ScratchProject():
         for sprite in program:
             for target in self.data["targets"]:
                 if target["name"] == sprite:
-                    self.add_sprite_script(target, program[sprite])
+                    self.add_sprite_scripts(target, program[sprite])
 
-    def add_sprite_script(self, target, program):
+    def add_sprite_scripts(self, target, program):
         script_count = 0
+        print("adding program", program)
         for script in program:
-
-            # Track previous block
-            prev_block_id = None
-
-            # Create blocks
-            for statement in script:
-                block_id = ScratchProject.generate_id()
-                block = ScratchProject.generate_block(statement)
-
-
-                if prev_block_id is None:
-                    block["topLevel"] = True
-                    block["x"] = 180
-                    block["y"] = 180 + (script_count * 30)
-                else:
-                    target["blocks"][prev_block_id]["next"] = block_id
-                    block["parent"] = prev_block_id
-
-                target["blocks"][block_id] = block
-                prev_block_id = block_id
-
+            self.add_block(target, script, prev=None, script_offset=script_count)
             script_count += 1
+
+    
+    def add_block(self, target, block, prev=None, script_offset=0):
+        print("adding block", block)
+        block_id = ScratchProject.generate_id()
+        scratch_block = ScratchProject.generate_block(block)
+
+        if prev is None:
+            scratch_block["topLevel"] = True
+            scratch_block["x"] = 50
+            scratch_block["y"] = 50 + (script_offset * 30)
+        else:
+            target["blocks"][prev]["next"] = block_id
+            scratch_block["parent"] = prev
+
+        target["blocks"][block_id] = scratch_block
+
+        cprev = block_id # previous id as we iterate through children
+        for child in block.get("children", []):
+            cprev = self.add_block(target, child, prev=cprev, script_offset=script_offset)
+            
+        return block_id
+
 
     def write(self, filename):
 
@@ -115,6 +119,17 @@ def parse_tree(t):
     if t.data == "start":
         return list(map(parse_tree, t.children))
 
+    if t.data == "function_definition":
+        func = str(t.children[0])
+        opcode = "none"
+        if func == "when_flag_clicked":
+            opcode = "event_whenflagclicked"
+        operations = [parse_tree(c) for c in t.children[1:]]
+        return {
+            "opcode": opcode,
+            "children": operations
+        }
+
     if t.data == "instruction":
         func = str(t.children[0])
         arg = str(t.children[1])
@@ -126,15 +141,3 @@ def parse_tree(t):
 
     return None
 
-def wrap(sprite_name, script):
-    """
-    temporary function to wrap script into program structure
-    TODO: should replace later
-    """
-    program = {
-        sprite_name: [
-            {"opcode": "event_whenflagclicked"}
-        ]
-    }
-    program["Sprite1"] += script
-    return program

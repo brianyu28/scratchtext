@@ -1,11 +1,12 @@
-start: instruction+
+start: function_definition+
 
+function_definition: FUNCTION "()" "{" instruction+ "}"
 instruction: FUNCTION "(" NUMBER ")"
 
-FUNCTION: WORD
+FUNCTION: CNAME
 NUMBER: SIGNED_NUMBER
 WHITESPACE: (" " | "\n")+
 
-%import common.WORD
+%import common.CNAME
 %import common.SIGNED_NUMBER
 %ignore WHITESPACE

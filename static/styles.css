@@ -20,6 +20,12 @@ body {
     min-height: 700px;
 }
 
+#sprite-select {
+    border-radius: 2px;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
 .submit {
     border-radius: 5px;
     font-size: 14px;
@@ -31,6 +37,7 @@ body {
     border: 1px solid black;
     border-radius: 3px;
     font-family: serif;
+    font-weight: bold;
     margin: 5px;
     padding: 8px;
     color: white;
@@ -38,4 +45,8 @@ body {
 
 .block-motion {
     background-color: #5c97f7;
+}
+
+.block-event {
+    background-color: #f6c042;
 }

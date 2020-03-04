@@ -10,15 +10,22 @@
     <body>
         <div class="sidebar">
             <h2>Motion</h2>
-                <div><div class="block block-motion">move(10)</div></div>
-                <div><div class="block block-motion">turn(15)</div></div>
-                <div><div class="block block-motion">goto(10, 20)</div></div>
+                <div><div class="block block-motion" data-value="    move(10)">move(10)</div></div>
+                <div><div class="block block-motion" data-value="    turn(15)">turn(15)</div></div>
+                <div><div class="block block-motion" data-value="    goto(10, 20)">goto(10, 20)</div></div>
+            <h2>Events</h2>
+                <div><div class="block block-event" data-value="when_flag_clicked() {\n\n}">when_flag_clicked()</div></div>
         </div>
         <div class="main">
             <img class="title" src="/static/title.png">
-            <form action="/submit" method="post">
+            <div>
+                <select id="sprite-select">
+                </select>
+                <button>Add Sprite</button>
+            </div>
+            <form id="form">
                 <textarea name="code" id="editor"></textarea>
-                <input type="file">
+                <input id="file-select" type="file">
                 <div>
                     <input class="submit" type="submit" value="Download Program">
                 </div>
