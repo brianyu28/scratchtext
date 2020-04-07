@@ -90,7 +90,12 @@ document.addEventListener('DOMContentLoaded', function() {
             var url = window.URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = url;
-            a.download = document.querySelector('#file-select').files[0].name.replace('.sb3', ' (Updated).sb3');
+            const file = document.querySelector('#file-select').files[0];
+            if (file === undefined) {
+                a.download = 'project.sb3';
+            } else {
+                a.download = file.name.replace('.sb3', ' (Updated).sb3');
+            }
             document.body.appendChild(a);
             a.click();    
             a.remove();

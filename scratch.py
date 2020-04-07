@@ -53,6 +53,15 @@ class ScratchProject():
                 ]
             }
 
+        # Turn right
+        elif opcode == "motion_turnright":
+            block["inputs"] = {
+                "DEGREES": [
+                    1,
+                    [4, str(statement["text_value"])]
+                ]
+            }
+
         return block
 
     def add_program(self, program):
@@ -68,7 +77,7 @@ class ScratchProject():
             self.add_block(target, script, prev=None, script_offset=script_count)
             script_count += 1
 
-    
+
     def add_block(self, target, block, prev=None, script_offset=0):
         print("adding block", block)
         block_id = ScratchProject.generate_id()
@@ -87,7 +96,7 @@ class ScratchProject():
         cprev = block_id # previous id as we iterate through children
         for child in block.get("children", []):
             cprev = self.add_block(target, child, prev=cprev, script_offset=script_offset)
-            
+
         return block_id
 
 
@@ -133,9 +142,18 @@ def parse_tree(t):
     if t.data == "instruction":
         func = str(t.children[0])
         arg = str(t.children[1])
-        if func == "move":
+        if func == "forever":
+            return {
+                "opcode": "forever"
+            }
+        elif func == "move":
             return {
                 "opcode": "motion_movesteps",
+                "text_value": arg
+            }
+        elif func == "turn":
+            return {
+                "opcode": "motion_turnright",
                 "text_value": arg
             }
 
