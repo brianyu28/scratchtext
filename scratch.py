@@ -78,7 +78,7 @@ class ScratchProject():
             script_count += 1
 
 
-    def add_block(self, target, block, prev=None, script_offset=0):
+    def add_block(self, target, block, prev=None, script_offset=0, first_child=False):
         print("adding block", block)
         block_id = ScratchProject.generate_id()
         scratch_block = ScratchProject.generate_block(block)
@@ -88,15 +88,25 @@ class ScratchProject():
             scratch_block["x"] = 50
             scratch_block["y"] = 50 + (script_offset * 30)
         else:
-            target["blocks"][prev]["next"] = block_id
+            if not first_child:
+                target["blocks"][prev]["next"] = block_id
+            else:
+                target["blocks"][prev]["inputs"] = {
+                    "SUBSTACK": [2, block_id]
+                }
             scratch_block["parent"] = prev
 
         target["blocks"][block_id] = scratch_block
 
-        cprev = block_id # previous id as we iterate through children
-        for child in block.get("children", []):
+        cprev = block_id # previous id as we iterate through body of a function
+        for child in block.get("body", []):
             cprev = self.add_block(target, child, prev=cprev, script_offset=script_offset)
 
+        first = True
+        for child in block.get("children", []):
+            cprev = self.add_block(target, child, prev=cprev, script_offset=script_offset, first_child=first)
+            first = False
+        
         return block_id
 
 
@@ -136,7 +146,7 @@ def parse_tree(t):
         operations = [parse_tree(c) for c in t.children[1:]]
         return {
             "opcode": opcode,
-            "children": operations
+            "body": operations
         }
 
     if t.data == "instruction":
@@ -144,7 +154,8 @@ def parse_tree(t):
         arg = str(t.children[1])
         if func == "forever":
             return {
-                "opcode": "forever"
+                "opcode": "control_forever",
+                "children": [parse_tree(child) for child in t.children[1:]]
             }
         elif func == "move":
             return {
