@@ -2,6 +2,5 @@ when_flag_clicked() {
     move(10)
     forever {
         move(20)
-        move(30)
     }
 }

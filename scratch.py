@@ -157,6 +157,10 @@ def parse_tree(t):
                 "opcode": "control_forever",
                 "children": [parse_tree(child) for child in t.children[1:]]
             }
+        elif func == "repeat":
+            return {
+                "opcode": "control_repeat"
+            }
         elif func == "move":
             return {
                 "opcode": "motion_movesteps",

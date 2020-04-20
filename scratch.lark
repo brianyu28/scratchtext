@@ -1,8 +1,9 @@
 start: function_definition+
 
 function_definition: FUNCTION "()" "{" instruction+ "}"
-instruction: FUNCTION "(" NUMBER ")" | FOREVER "{" instruction+  "}"
+instruction: FUNCTION "(" NUMBER ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}"
 
+CONTROL: "repeat"
 FOREVER: "forever"
 FUNCTION: CNAME
 NUMBER: SIGNED_NUMBER
