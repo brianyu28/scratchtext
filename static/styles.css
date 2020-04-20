@@ -41,6 +41,7 @@ body {
     margin: 5px;
     padding: 8px;
     color: white;
+    z-index: 2;
 }
 
 .block-motion {

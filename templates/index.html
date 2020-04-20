@@ -5,23 +5,29 @@
         <link rel="stylesheet" href="/static/styles.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
+
+        <script src="/static/codemirror-5.52.2/lib/codemirror.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="/static/codemirror-5.52.2/lib/codemirror.css">
+        <script src="/static/codemirror-5.52.2/mode/javascript/javascript.js"></script>
+
         <script src="/static/scripts.js"></script>
     </head>
     <body>
         <div class="sidebar">
             <h2>Motion</h2>
-                <div><div class="block block-motion" data-value="    move(10)">move(10)</div></div>
-                <div><div class="block block-motion" data-value="    turn(15)">turn(15)</div></div>
-                <div><div class="block block-motion" data-value="    goto(10, 20)">goto(10, 20)</div></div>
-                <div><div class="block block-motion" data-value="    glide(1, 10, 20)">glide(1, 10, 20)</div></div>
-                <div><div class="block block-motion" data-value="    setX(10)">setX(10)</div></div>
-                <div><div class="block block-motion" data-value="    setY(10)">setY(10)</div></div>
+                <div><div class="block block-motion" data-value="move(10)">move(10)</div></div>
+                <div><div class="block block-motion" data-value="turn(15)">turn(15)</div></div>
+                <div><div class="block block-motion" data-value="goto(10, 20)">goto(10, 20)</div></div>
+                <div><div class="block block-motion" data-value="glide(1, 10, 20)">glide(1, 10, 20)</div></div>
+                <div><div class="block block-motion" data-value="setX(10)">setX(10)</div></div>
+                <div><div class="block block-motion" data-value="setY(10)">setY(10)</div></div>
             <h2>Events</h2>
                 <div><div class="block block-event" data-value="when_flag_clicked() {\n\n}">when_flag_clicked()</div></div>
                 <div><div class="block block-event" data-value="when_space_pressed() {\n\n}">when_space_pressed()</div></div>
                 <div><div class="block block-event" data-value="when_clicked() {\n\n}">when_clicked()</div></div>
             <h2>Control</h2>
-                <div><div class="block block-event" data-value="    forever() {\n    \n    }">forever()</div></div>
+                <div><div class="block block-event" data-value="forever() {\n\n}">forever()</div></div>
+                <div><div class="block block-event" data-value="repeat(10) {\n\n}">repeat(10)</div></div>
         </div>
         <div class="main">
             <img class="title" src="/static/title.png">
@@ -32,7 +38,8 @@
                 <button id="delete">Delete Sprite</button>
             </div>
             <form id="form">
-                <textarea name="code" id="editor"></textarea>
+                <div id="codearea">
+                </div>
                 <input id="file-select" type="file">
                 <div>
                     <input class="submit" type="submit" value="Download Program">

@@ -12,7 +12,7 @@ function updateSpriteSelect() {
 }
 
 function updateCurrentScript() {
-    scripts[curSprite] = $('#editor').val();
+    scripts[curSprite] = codeMirror.getValue();
 }
 
 function addSprite() {
@@ -42,7 +42,7 @@ function deleteSprite() {
         curSprite = sprites[index];
         console.log(curSprite);
         $('#sprite-select').val(curSprite);
-        $('#editor').val(scripts[curSprite]);
+        codeMirror.setValue(scripts[curSprite]);
     }
 }
 
@@ -50,10 +50,16 @@ function changeSpriteSelection(name) {
     updateCurrentScript();
     curSprite = name;
     $('#sprite-select').val(name);
-    $('#editor').val(scripts[name]);
+    codeMirror.setValue(scripts[name]);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    codeMirror = CodeMirror(document.querySelector('#codearea'), {
+        'lineNumbers': 'true',
+        'tabSize': 4,
+        'indentUnit': 4,
+    });
 
     updateSpriteSelect();
 
@@ -61,17 +67,14 @@ document.addEventListener('DOMContentLoaded', function() {
         helper: 'clone'
     });
 
-    $('#editor').droppable({
+    $('#codearea').droppable({
         accept: '.block',
         drop: function (event, ui) {
-            let code = $('#editor').val();
-            let add = ui.draggable.data('value').replace(/\\n/g, '\n');
-            let startPos = $('#editor').prop('selectionStart');
-            let endPos = $('#editor').prop('selectionEnd');
-            let pre = code.substr(0, startPos);
-            let end = code.substr(endPos);
-            code = pre + (pre.endsWith('\n') ? '' : '\n') + add + (code.startsWith('\n') ? '' : '\n') + end;
-            $('#editor').val(code);
+            let cursor = codeMirror.getCursor();
+            let add = ui.draggable.data('value').replace(/\\n/g, '\n') + '\n';
+            codeMirror.execCommand('indentAuto');
+            codeMirror.replaceSelection(add, cursor, cursor);
+            codeMirror.execCommand('goLineDown');
         }
     });
 
@@ -111,16 +114,5 @@ document.addEventListener('DOMContentLoaded', function() {
         changeSpriteSelection(name);
     });
 
-    // Allow tab in textarea
-    // https://sumtips.com/snippets/javascript/tab-in-textarea/
-    $('textarea').keydown(function(e) {
-        if (e.keyCode === 9) { // tab was pressed
-            let start = this.selectionStart;
-            let end = this.selectionEnd;
-            var $this = $(this);
-            $this.val($this.val().substring(0, start) + '    ' + $this.val().substring(end));
-            this.selectionStart = this.selectionEnd = start + 4;
-            return false;
-        }
-    });
+
 });
