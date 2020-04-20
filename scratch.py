@@ -62,6 +62,17 @@ class ScratchProject():
                 ]
             }
 
+        # Control
+        # Condition
+        elif opcode == "control_repeat":
+            print(statement)
+            block["inputs"] = {
+                "TIMES": [
+                    1,
+                    [6, str(statement["argument"])]
+                ]
+            }
+
         return block
 
     def add_program(self, program):
@@ -88,12 +99,13 @@ class ScratchProject():
             scratch_block["x"] = 50
             scratch_block["y"] = 50 + (script_offset * 30)
         else:
+            prev_block = target["blocks"][prev]
             if not first_child:
-                target["blocks"][prev]["next"] = block_id
+                prev_block["next"] = block_id
             else:
-                target["blocks"][prev]["inputs"] = {
-                    "SUBSTACK": [2, block_id]
-                }
+                if "inputs" not in prev_block:
+                    prev_block["inputs"] = dict()
+                prev_block["inputs"]["SUBSTACK"] = [2, block_id]
             scratch_block["parent"] = prev
 
         target["blocks"][block_id] = scratch_block
@@ -151,25 +163,27 @@ def parse_tree(t):
 
     if t.data == "instruction":
         func = str(t.children[0])
-        arg = str(t.children[1])
         if func == "forever":
             return {
                 "opcode": "control_forever",
                 "children": [parse_tree(child) for child in t.children[1:]]
             }
         elif func == "repeat":
+            print(t.children)
             return {
-                "opcode": "control_repeat"
+                "opcode": "control_repeat",
+                "argument": str(t.children[1]),
+                "children": [parse_tree(child) for child in t.children[2:]]
             }
         elif func == "move":
             return {
                 "opcode": "motion_movesteps",
-                "text_value": arg
+                "text_value": str(t.children[1])
             }
         elif func == "turn":
             return {
                 "opcode": "motion_turnright",
-                "text_value": arg
+                "text_value": str(t.children[1])
             }
 
     return None
