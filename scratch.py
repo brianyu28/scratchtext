@@ -80,6 +80,11 @@ class ScratchProject():
                     [6, str(statement["argument"])]
                 ]
             }
+        
+        elif opcode == "control_wait":
+            block["inputs"] = {
+                "DURATION": [1, [5, str(statement["argument"])]]
+            }
 
         return block
 
@@ -171,17 +176,23 @@ def parse_tree(t):
 
     if t.data == "instruction":
         func = str(t.children[0])
+
+        # Control
         if func == "forever":
             return {
                 "opcode": "control_forever",
                 "children": [parse_tree(child) for child in t.children[1:]]
             }
         elif func == "repeat":
-            print(t.children)
             return {
                 "opcode": "control_repeat",
                 "argument": str(t.children[1]),
                 "children": [parse_tree(child) for child in t.children[2:]]
+            }
+        elif func == "wait":
+            return {
+                "opcode": "control_wait",
+                "argument": int(t.children[1])
             }
 
         # Motion
