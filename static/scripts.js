@@ -87,7 +87,12 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             body: formData 
         })
-        .then(response => response.blob())
+        .then(response => {
+            if (response.status == 500) {
+                throw new Error('There was an error converting your project to Scratch.');
+            }
+            return response.blob();
+        })
         .then(blob => {
             // https://stackoverflow.com/a/42274086/11102803
             var url = window.URL.createObjectURL(blob);
@@ -102,6 +107,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(a);
             a.click();    
             a.remove();
+        })
+        .catch(err => {
+            alert(err);
         });
         return false;
     });

@@ -56,6 +56,16 @@ class ScratchProject():
                 ]
             }
 
+        elif opcode == "motion_gotoxy":
+            block["inputs"] = {
+                "X": [
+                    1, [4, str(statement["x"])]
+                ],
+                "Y": [
+                    1, [4, str(statement["y"])]
+                ]
+            }
+
         # Turn right
         elif opcode == "motion_turnright":
             block["inputs"] = {
@@ -179,7 +189,9 @@ def parse_tree(t):
             "body": operations
         }
 
+    print(t)
     if t.data == "instruction":
+        instr_type = t.children[0].type
         func = str(t.children[0])
 
         # Control
@@ -210,6 +222,12 @@ def parse_tree(t):
             return {
                 "opcode": "motion_turnright",
                 "text_value": str(t.children[1])
+            }
+        elif func == "goto" and instr_type == "BINFUNC":
+            return {
+                "opcode": "motion_gotoxy",
+                "x": int(t.children[1]),
+                "y": int(t.children[2])
             }
         
         # Looks
