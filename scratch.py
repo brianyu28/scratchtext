@@ -44,6 +44,9 @@ class ScratchProject():
         if opcode == "event_whenflagclicked":
             pass
 
+        elif opcode == "event_whenthisspriteclicked":
+            pass
+
         # Motion
         elif opcode == "motion_movesteps":
             block["inputs"] = {
@@ -109,8 +112,8 @@ class ScratchProject():
 
         if prev is None:
             scratch_block["topLevel"] = True
-            scratch_block["x"] = 50
-            scratch_block["y"] = 50 + (script_offset * 30)
+            scratch_block["x"] = 50 + (script_offset * 300)
+            scratch_block["y"] = 50
         else:
             prev_block = target["blocks"][prev]
             if not first_child:
@@ -168,6 +171,8 @@ def parse_tree(t):
         opcode = "none"
         if func == "when_flag_clicked":
             opcode = "event_whenflagclicked"
+        elif func == "when_clicked":
+            opcode = "event_whenthisspriteclicked"
         operations = [parse_tree(c) for c in t.children[1:]]
         return {
             "opcode": opcode,
