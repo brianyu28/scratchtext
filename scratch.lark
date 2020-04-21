@@ -1,14 +1,17 @@
 start: function_definition+
 
 function_definition: FUNCTION "()" "{" instruction+ "}"
-instruction: FUNCTION "(" NUMBER ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}"
+instruction: FUNCTION "(" ARGUMENT ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}"
 
+ARGUMENT: NUMBER | STRING
 CONTROL: "repeat"
 FOREVER: "forever"
 FUNCTION: CNAME
 NUMBER: SIGNED_NUMBER
+STRING: ESCAPED_STRING
 WHITESPACE: (" " | "\n")+
 
 %import common.CNAME
+%import common.ESCAPED_STRING
 %import common.SIGNED_NUMBER
 %ignore WHITESPACE

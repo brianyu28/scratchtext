@@ -62,10 +62,18 @@ class ScratchProject():
                 ]
             }
 
+        # Looks
+        elif opcode == "looks_think":
+            block["inputs"] = {
+                "MESSAGE": [
+                    1,
+                    [10, statement["argument"]]
+                ]
+            }
+
         # Control
         # Condition
         elif opcode == "control_repeat":
-            print(statement)
             block["inputs"] = {
                 "TIMES": [
                     1,
@@ -175,6 +183,8 @@ def parse_tree(t):
                 "argument": str(t.children[1]),
                 "children": [parse_tree(child) for child in t.children[2:]]
             }
+
+        # Motion
         elif func == "move":
             return {
                 "opcode": "motion_movesteps",
@@ -184,6 +194,13 @@ def parse_tree(t):
             return {
                 "opcode": "motion_turnright",
                 "text_value": str(t.children[1])
+            }
+        
+        # Looks
+        elif func == "think":
+            return {
+                "opcode": "looks_think",
+                "argument": str(t.children[1].value)[1:-1]
             }
 
     return None
