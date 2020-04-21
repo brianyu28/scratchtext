@@ -74,6 +74,13 @@ class ScratchProject():
                     [4, str(statement["text_value"])]
                 ]
             }
+        
+        elif opcode == "motion_glidesecstoxy":
+            block["inputs"] = {
+                "SECS": [1, [4, str(statement["secs"])]],
+                "X": [1, [4, str(statement["x"])]],
+                "Y": [1, [4, str(statement["y"])]]
+            }
 
         # Looks
         elif opcode == "looks_think":
@@ -209,7 +216,7 @@ def parse_tree(t):
         elif func == "wait":
             return {
                 "opcode": "control_wait",
-                "argument": int(t.children[1])
+                "argument": str(t.children[1])
             }
 
         # Motion
@@ -226,8 +233,15 @@ def parse_tree(t):
         elif func == "goto" and instr_type == "BINFUNC":
             return {
                 "opcode": "motion_gotoxy",
-                "x": int(t.children[1]),
-                "y": int(t.children[2])
+                "x": str(t.children[1]),
+                "y": str(t.children[2])
+            }
+        elif func == "glide" and instr_type == "TRIFUNC":
+            return {
+                "opcode": "motion_glidesecstoxy",
+                "secs": str(t.children[1]),
+                "x": str(t.children[2]),
+                "y": str(t.children[3])
             }
         
         # Looks

@@ -1,13 +1,14 @@
 start: function_definition+
 
 function_definition: FUNCTION "()" "{" instruction+ "}"
-instruction: FUNCTION "(" ARGUMENT ")" | BINFUNC "(" ARGUMENT "," ARGUMENT ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}"
+instruction: FUNCTION "(" ARGUMENT ")" | BINFUNC "(" ARGUMENT "," ARGUMENT ")" | TRIFUNC "(" ARGUMENT "," ARGUMENT "," ARGUMENT ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}"
 
 ARGUMENT: NUMBER | STRING
 CONTROL: "repeat"
 FOREVER: "forever"
 FUNCTION: CNAME
 BINFUNC: CNAME
+TRIFUNC: CNAME
 NUMBER: SIGNED_NUMBER
 STRING: ESCAPED_STRING
 WHITESPACE: (" " | "\n")+
