@@ -47,6 +47,9 @@ class ScratchProject():
         elif opcode == "event_whenthisspriteclicked":
             pass
 
+        elif opcode == "event_whenkeypressed":
+            block["fields"] = statement["data"]["fields"]
+
         # Motion
         elif opcode == "motion_movesteps":
             block["inputs"] = {
@@ -79,6 +82,14 @@ class ScratchProject():
             block["inputs"] = {
                 "SECS": [1, [4, str(statement["secs"])]],
                 "X": [1, [4, str(statement["x"])]],
+                "Y": [1, [4, str(statement["y"])]]
+            }
+        elif opcode == "motion_setx":
+            block["inputs"] = {
+                "X": [1, [4, str(statement["x"])]]
+            }
+        elif opcode == "motion_sety":
+            block["inputs"] = {
                 "Y": [1, [4, str(statement["y"])]]
             }
 
@@ -186,14 +197,21 @@ def parse_tree(t):
     if t.data == "function_definition":
         func = str(t.children[0])
         opcode = "none"
+        data = dict()
         if func == "when_flag_clicked":
             opcode = "event_whenflagclicked"
         elif func == "when_clicked":
             opcode = "event_whenthisspriteclicked"
+        elif func == "when_space_pressed":
+            opcode = "event_whenkeypressed"
+            data = {
+                "fields": {"KEY_OPTION": ["space", None]}
+            }
         operations = [parse_tree(c) for c in t.children[1:]]
         return {
             "opcode": opcode,
-            "body": operations
+            "body": operations,
+            "data": data
         }
 
     print(t)
@@ -242,6 +260,16 @@ def parse_tree(t):
                 "secs": str(t.children[1]),
                 "x": str(t.children[2]),
                 "y": str(t.children[3])
+            }
+        elif func == "setX":
+            return {
+                "opcode": "motion_setx",
+                "x": str(t.children[1])
+            }
+        elif func == "setY":
+            return {
+                "opcode": "motion_sety",
+                "y": str(t.children[1])
             }
         
         # Looks
