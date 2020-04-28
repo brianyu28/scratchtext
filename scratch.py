@@ -4,13 +4,13 @@ import tempfile
 import shutil
 import zipfile
 
-from lark import Lark
+from lark import Lark, Tree
 
 class ScratchProject():
 
-    CUR_ID = 0
-
     def __init__(self, filename):
+        self.CUR_ID = 0
+        self.variables = dict()
         tmpdir = tempfile.mkdtemp()
         with zipfile.ZipFile(filename, "r") as zip_ref:
             zip_ref.extractall(tmpdir)
@@ -19,13 +19,19 @@ class ScratchProject():
         self.origin = filename
         shutil.rmtree(tmpdir)
 
-    @classmethod
-    def generate_id(cls):
-        ScratchProject.CUR_ID += 1
-        return f"scratchtext-{ScratchProject.CUR_ID}"
+    def generate_id(self, arg=None):
+        self.CUR_ID += 1
+        if arg:
+            return f"scratchtext-{arg}-{self.CUR_ID}"
+        else:
+            return f"scratchtext-{self.CUR_ID}"
 
-    @classmethod
-    def generate_block(cls, statement):
+    def variable(self, name):
+        if name not in self.variables:
+            self.variables[name] = self.generate_id(arg="var")
+        return self.variables[name]
+
+    def generate_block(self, statement):
         opcode = statement["opcode"]
 
         block = {
@@ -117,6 +123,20 @@ class ScratchProject():
                 "DURATION": [1, [5, str(statement["argument"])]]
             }
 
+        # Variables
+        elif opcode == "data_setvariableto":
+            variable = statement["variable"]
+            value = statement["value"]
+            variable_id = self.variable(variable)
+            block["inputs"] = {
+                "VALUE": [
+                    1, [10, value]
+                ]
+            }
+            block["fields"] = {
+                "VARIABLE": [variable, variable_id]
+            }
+
         return block
 
     def add_program(self, program):
@@ -124,19 +144,28 @@ class ScratchProject():
             for target in self.data["targets"]:
                 if target["name"] == sprite:
                     self.add_sprite_scripts(target, program[sprite])
+        
+        # Add variables
+        for target in self.data["targets"]:
+            if target["isStage"]:
+                if "variables" not in target:
+                    target["variables"] = dict()
+                for variable in self.variables:
+                    variable_id = self.variables[variable]
+                    target["variables"][variable_id] = [variable, "0"]
 
     def add_sprite_scripts(self, target, program):
         script_count = 0
         print("adding program", program)
+        self.variables = dict()
         for script in program:
             self.add_block(target, script, prev=None, script_offset=script_count)
             script_count += 1
 
-
     def add_block(self, target, block, prev=None, script_offset=0, first_child=False):
         print("adding block", block)
-        block_id = ScratchProject.generate_id()
-        scratch_block = ScratchProject.generate_block(block)
+        block_id = self.generate_id()
+        scratch_block = self.generate_block(block)
 
         if prev is None:
             scratch_block["topLevel"] = True
@@ -216,6 +245,21 @@ def parse_tree(t):
 
     print(t)
     if t.data == "instruction":
+
+        if isinstance(t.children[0], Tree):
+            root = t.children[0]
+            data = root.data
+            if data == "assignment":
+                variable = str(root.children[0])
+                value = str(root.children[1])
+                return {
+                        "opcode": "data_setvariableto",
+                        "variable": variable,
+                        "value": value
+                }
+            
+            return None
+
         instr_type = t.children[0].type
         func = str(t.children[0])
 
