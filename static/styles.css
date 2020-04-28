@@ -22,7 +22,8 @@ body {
 .sidebar {
     float: left;
     width: 250px;
-    min-height: 700px;
+    height: 100vh;
+    overflow: scroll;
 }
 
 #sprite-select {

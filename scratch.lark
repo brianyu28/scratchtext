@@ -1,7 +1,7 @@
 start: function_definition+
 
 function_definition: FUNCTION "()" "{" instruction+ "}"
-instruction: FUNCTION "(" ARGUMENT ")" | BINFUNC "(" ARGUMENT "," ARGUMENT ")" | TRIFUNC "(" ARGUMENT "," ARGUMENT "," ARGUMENT ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}" | assignment
+instruction: FUNCTION "(" ")" | FUNCTION "(" ARGUMENT ")" | BINFUNC "(" ARGUMENT "," ARGUMENT ")" | TRIFUNC "(" ARGUMENT "," ARGUMENT "," ARGUMENT ")" | FOREVER "{" instruction+  "}" | CONTROL "(" NUMBER ")" "{" instruction+ "}" | assignment
 assignment: VARIABLE "=" ARGUMENT
 
 ARGUMENT: NUMBER | STRING

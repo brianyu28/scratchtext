@@ -107,6 +107,17 @@ class ScratchProject():
                     [10, statement["argument"]]
                 ]
             }
+        elif opcode == "looks_say":
+            block["inputs"] = {
+                "MESSAGE": [
+                    1,
+                    [10, statement["argument"]]
+                ]
+            }
+        elif opcode == "looks_show":
+            pass
+        elif opcode == "looks_hide":
+            pass
 
         # Control
         # Condition
@@ -321,6 +332,19 @@ def parse_tree(t):
             return {
                 "opcode": "looks_think",
                 "argument": str(t.children[1].value)[1:-1]
+            }
+        elif func == "say":
+            return {
+                "opcode": "looks_say",
+                "argument": str(t.children[1].value)[1:-1]
+            }
+        elif func == "show":
+            return {
+                "opcode": "looks_show"
+            }
+        elif func == "hide":
+            return {
+                "opcode": "looks_hide"
             }
 
     return None

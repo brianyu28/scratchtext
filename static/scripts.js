@@ -70,11 +70,18 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#codearea').droppable({
         accept: '.block',
         drop: function (event, ui) {
-            let cursor = codeMirror.getCursor();
-            let add = ui.draggable.data('value').replace(/\\n/g, '\n') + '\n';
-            codeMirror.execCommand('indentAuto');
-            codeMirror.replaceSelection(add, cursor, cursor);
-            codeMirror.execCommand('goLineDown');
+            var cursor = codeMirror.getCursor();
+            let add = ui.draggable.data('value').replace(/\\n/g, '\n');
+            add.split('\n').forEach(line => {
+                cursor = codeMirror.getCursor();
+                codeMirror.replaceSelection(line + '\n', cursor, cursor);
+                codeMirror.execCommand('indentAuto');
+                codeMirror.execCommand('goLineDown');
+            })
+            if (ui.draggable.data('up') === 'yes') {
+                codeMirror.execCommand('goLineUp');
+                codeMirror.execCommand('goLineUp');
+            }
         }
     });
 
